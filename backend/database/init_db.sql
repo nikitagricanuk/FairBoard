@@ -10,8 +10,8 @@ CREATE TABLE IF NOT EXISTS users (
 
 CREATE TABLE IF NOT EXISTS problems (
                     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-                    problem_number VARCHAR(3) UNIQUE NOT NULL, 
-                    assigned_to DATETIME NOT NULL
+                    problem_number VARCHAR(10) UNIQUE NOT NULL, 
+                    assigned_to TIMESTAMP NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS users_problems_map (
