@@ -3,10 +3,10 @@ services:
         build:
             context: .
             dockerfile: Dockerfile
-        restart: always
+        # restart: always
         depends_on:
             postgres:
-                condition: service_started
+                condition: service_healthy
 
     postgres:
         build:
@@ -19,6 +19,11 @@ services:
                 - POSTGRES_DB=postgres
                 - POSTGRES_USER=postgres
                 - POSTGRES_PASSWORD=postgres
+        healthcheck:
+            test: ["CMD", "pg_isready", "-U", "postgres"]
+            interval: 10s
+            timeout: 5s
+            retries: 5
 
 volumes:
     postgres_data:
