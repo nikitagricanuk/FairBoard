@@ -1,0 +1,30 @@
+services:
+    backend:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        # restart: always
+        depends_on:
+            postgres:
+                condition: service_healthy
+
+    postgres:
+        build:
+                context: .
+                dockerfile: Dockerfile.postgres
+        restart: always
+        volumes:
+                - postgres_data:/var/lib/postgresql/data
+        environment:
+                - POSTGRES_DB=postgres
+                - POSTGRES_USER=postgres
+                - POSTGRES_PASSWORD=postgres
+        healthcheck:
+            test: ["CMD", "pg_isready", "-U", "postgres"]
+            interval: 10s
+            timeout: 5s
+            retries: 5
+
+volumes:
+    postgres_data:
+        driver: local
