@@ -41,7 +41,7 @@ class NumberRecord(StatesGroup):
 async def command_start(message: Message) -> None:
     await message.answer("Привет", reply_markup=mainKeyboard)
 
-@router.message(F.text == "Список номеров")
+@router.message(F.text == "Список номеров")#не доконца норм работает
 async def list_numbers(message: Message, state: FSMContext) -> None:
     await get_numbers()
     await message.answer("Доступные номера:")
@@ -79,7 +79,7 @@ async def record_time(message: Message) -> None:
 async def distributed_numbers(message: Message) -> None:
     await message.answer("Список распределенных номеров: ...")
 
-@app.get("/problems")
+@app.get("/problems")#не доконца норм работает
 async def get_numbers(problems: Optional[str] = Query(None)):
     global numbers
     if problems is not None:
