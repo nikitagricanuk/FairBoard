@@ -8,6 +8,7 @@ from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.context import FSMContext
 import uvicorn
 from typing import List, Optional
+import json
 
 TOKEN = "8054015931:AAH4GAxOTCnCLCyrwtW28f05KQl48eYnjkA"
 bot = Bot(token=TOKEN)
@@ -42,10 +43,11 @@ async def command_start(message: Message) -> None:
 
 @router.message(F.text == "Список номеров")
 async def list_numbers(message: Message, state: FSMContext) -> None:
-    get_numbers()
+    await get_numbers()
     await message.answer("Доступные номера:")
-    for number in numbers:
-        await message.answer(number)
+    print(numbers)
+   # for number in numbers:
+     #   await message.answer(number)
     await state.set_state(NumberRecord.show_numbers) 
 
 @router.message(NumberRecord.show_numbers, F.text == "Назад") 
@@ -78,13 +80,16 @@ async def distributed_numbers(message: Message) -> None:
     await message.answer("Список распределенных номеров: ...")
 
 @app.get("/problems")
-async def get_numbers(problems: Optional[List[float]] = Query(None)):
+async def get_numbers(problems: Optional[str] = Query(None)):
     global numbers
     if problems is not None:
-        numbers = problems
-        return {"message": "Данные успешно получены", "numbers": numbers}
+        try:
+            numbers = json.loads(problems)
+            return {"message": "Данные успешно получены", "numbers": numbers}
+        except json.JSONDecodeError:
+            return {"message": "Неправильный формат JSON", "numbers": []}
     else:
-        return {"message": "Данные не были переданы", "numbers": numbers}
+        return {"message": "Данные не были переданы", "numbers": []}
 
 app.post("/assign")
 async def set_user_number():
