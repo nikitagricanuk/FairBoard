@@ -2,11 +2,12 @@ import asyncio
 from aiogram import Bot, Dispatcher, Router, F
 from aiogram.filters import CommandStart, Command
 from aiogram.types import Message, ReplyKeyboardMarkup, KeyboardButton
-from fastapi import FastAPI
+from fastapi import FastAPI, Query
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.context import FSMContext
 import uvicorn
+from typing import List, Optional
 
 TOKEN = "8054015931:AAH4GAxOTCnCLCyrwtW28f05KQl48eYnjkA"
 bot = Bot(token=TOKEN)
@@ -41,7 +42,10 @@ async def command_start(message: Message) -> None:
 
 @router.message(F.text == "Список номеров")
 async def list_numbers(message: Message, state: FSMContext) -> None:
-    await message.answer("Доступные номера:", reply_markup=await inline_numbers())
+    get_numbers()
+    await message.answer("Доступные номера:")
+    for number in numbers:
+        await message.answer(number)
     await state.set_state(NumberRecord.show_numbers) 
 
 @router.message(NumberRecord.show_numbers, F.text == "Назад") 
@@ -73,9 +77,14 @@ async def record_time(message: Message) -> None:
 async def distributed_numbers(message: Message) -> None:
     await message.answer("Список распределенных номеров: ...")
 
-app.get("/problems")
-async def get_numbers():
-    pass
+@app.get("/problems")
+async def get_numbers(problems: Optional[List[float]] = Query(None)):
+    global numbers
+    if problems is not None:
+        numbers = problems
+        return {"message": "Данные успешно получены", "numbers": numbers}
+    else:
+        return {"message": "Данные не были переданы", "numbers": numbers}
 
 app.post("/assign")
 async def set_user_number():
@@ -88,7 +97,6 @@ async def get_info():
 app.get("/list")
 async def get_users_list():
     pass
-
 
 async def main():
     await dp.start_polling(bot)
