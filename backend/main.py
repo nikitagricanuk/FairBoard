@@ -5,14 +5,14 @@ app = FastAPI()
 def problems():
     return { "problems": problems }
 
-@app.post("assign")
+@app.post("/assign")
 def assign():
     return {"message": "Вы записались"}
 
-@app.get("info")
+@app.get("/info")
 def info():
     return {"window": "current_window"}
 
-@app.get("list")
+@app.get("/list")
 def list():
     return {"list":"list"}
