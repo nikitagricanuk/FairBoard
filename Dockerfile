@@ -8,4 +8,4 @@ RUN pip install -r requirements.txt
 
 COPY . .
 
-ENTRYPOINT ["fastapi", "dev", "backend/main.py"]
+ENTRYPOINT ["python", "-u", "backend/main.py"]
